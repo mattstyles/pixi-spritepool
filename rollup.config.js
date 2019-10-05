@@ -10,7 +10,7 @@ export default [
     input: 'src/index.js',
     external: ['pixi.js'],
     output: {
-      name: pkg.name,
+      name: 'SpritePool',
       file: pkg.browser,
       format: 'umd',
       globals: {
