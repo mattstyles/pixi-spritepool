@@ -1,10 +1,8 @@
 
 import tape from 'tape'
 
-import { pre } from './'
-
-tape('root::pre', t => {
+tape('@TODO', t => {
   t.plan(1)
 
-  t.equal(pre('A')('B'), 'AB', 'It prefixes')
+  t.ok('@TODO')
 })

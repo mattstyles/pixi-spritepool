@@ -67,6 +67,6 @@
     "tape": "^4.11.0"
   },
   "dependencies": {
-    "mathutil": "^2.3.0"
+    "pixi.js": "^5.0.0"
   }
 }

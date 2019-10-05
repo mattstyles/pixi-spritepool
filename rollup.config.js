@@ -8,10 +8,14 @@ import pkg from './package.json'
 export default [
   {
     input: 'src/index.js',
+    external: ['pixi.js'],
     output: {
       name: pkg.name,
       file: pkg.browser,
-      format: 'umd'
+      format: 'umd',
+      globals: {
+        'pixi.js': 'PIXI'
+      }
     },
     plugins: [
       resolve(),
@@ -23,7 +27,7 @@ export default [
   },
   {
     input: 'src/index.js',
-    external: ['mathutil'],
+    external: ['pixi.js'],
     output: [
       {
         file: pkg.main,
