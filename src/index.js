@@ -2,28 +2,25 @@
 import { Sprite } from 'pixi.js'
 
 /**
- * Try a generic sprite pool, with malloc and free abilities.
+ * Holds a pool of Sprites, with malloc and free abilities.
  * All sprites are hidden by default.
+ * @class
  */
 export class SpritePool {
-  constructor ({
-    length = 10,
-    container = null
-  } = {}) {
-    this.pool = []
-    this.container = container
-
-    // We don't need the return, this will tack the new array on to
-    // this.pool and attach them if we have container, if not, then the
-    // caller can use `SpritePool.attach` (as it happens, Pixi won’t
-    // let us attach the same thing twice anyway).
-    this.malloc(length)
+  /**
+   * @static
+   * @constructor
+   */
+  static of (_) {
+    return new SpritePool(_)
   }
 
-  static of (params) {
-    return new SpritePool(params)
-  }
-
+  /**
+   * Static method for attaching the contents of a sprite pool to a given
+   * container. This is relatively safe as Pixi won’t add the same sprite
+   * more than once.
+   * @static
+   */
   static attachPool (pool, container) {
     let i = pool.pool.length
     while (i--) {
@@ -31,6 +28,36 @@ export class SpritePool {
     }
   }
 
+  /**
+   * @constructor
+   * @param {object} [params] - single-arity parametric constructor
+   * @param {number} [params.length=10] - the size of the initial pool
+   * @param {?PIXI.Container} [params.container=null] - the container to attach to
+   */
+  constructor ({
+    length = 10,
+    container = null
+  } = {}) {
+    /**
+     * @member SpritePool.pool
+     * @type {PIXI.Sprite[]}
+     */
+    this.pool = []
+
+    /**
+     * @member SpritePool.container
+     * @type {?PIXI.Container}
+     */
+    this.container = container
+
+    this.malloc(length)
+  }
+
+  /**
+   * @method attach
+   * @param {PIXI.Container} container - the container to attach to
+   * @param {SpritePool} [pool] - array-like object to attach to container
+   */
   attach (container, pool) {
     if (!pool) {
       pool = this.pool
@@ -41,6 +68,11 @@ export class SpritePool {
     }
   }
 
+  /**
+   * @method attach
+   * @param {PIXI.Container} container - the container to detach from
+   * @param {SpritePool} [pool] - array-like object to detach sprites from
+   */
   detach (container, pool) {
     if (!pool) {
       pool = this.pool
@@ -51,14 +83,37 @@ export class SpritePool {
     }
   }
 
+  /**
+   * @method get
+   * @param {number} i - the array indice to grab a Sprite from
+   * @returns {PIXI.Sprite} the sprite held it index `i`
+   */
   get (i) {
     return this.pool[i]
   }
 
+  /**
+   * @method length
+   * @returns {number} - the size of the current pool
+   */
   get length () {
     return this.pool.length
   }
 
+  /**
+   * @callback MapFunc
+   * @defaults identity
+   * @param {PIXI.Sprite}
+   */
+
+  /**
+   * The output of the mapped function will be applied back in to the pool of
+   * sprites at the same location.
+   *
+   * @method map
+   * @param {MapFunc} [cb=identity] - the mapping function to apply to each
+   * array in the sprite pool
+   */
   map (cb = _ => _) {
     let i = this.pool.length
     while (i--) {
@@ -66,10 +121,15 @@ export class SpritePool {
     }
   }
 
-  // Allocates a new array and applies it to the existing pool.
-  // Usually you'll want to attach this pool to a container, which will be done
-  // automatically if we have a container supplied, otherwise its a good for
-  // the caller (hence returning the new array).
+  /**
+   * Allocates a new array and applies it to the existing pool.
+   * Usually you'll want to attach this pool to a container, which will be done
+   * automatically if we have a container supplied, otherwise its a job for
+   * the caller (hence returning the new array).
+   * @method malloc
+   * @param {integer} length - the size of the new section to allocate
+   * @returns {PIXI.Sprite[]} - the list of newly initialised Sprites
+   */
   malloc (length) {
     const temp = Array.from({ length }, (_) => {
       const sprite = new Sprite()
@@ -85,6 +145,10 @@ export class SpritePool {
 
   /**
    * Nukes the final `length` segments from the pool, and detaches if possible
+   * @method free
+   * @param {integer} length - the amount of sprites to remove and flag as
+   * destroyable.
+   * @return {PIXI.Sprite[]} - the removed (and destroyed) sprites
    */
   free (length) {
     const temp = this.pool.splice(this.pool.length - length, length)
