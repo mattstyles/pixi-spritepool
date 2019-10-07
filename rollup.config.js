@@ -2,26 +2,39 @@
 import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
 import buble from 'rollup-plugin-buble'
+import { uglify } from 'rollup-plugin-uglify'
 
 import pkg from './package.json'
+
+const bubleOptions = {
+  exclude: ['node_modules/**'],
+  objectAssign: true
+}
+
+const umd = {
+  name: 'SpritePool',
+  file: 'dist/pixi-spritepool.js'
+}
 
 export default [
   {
     input: 'src/index.js',
     external: ['pixi.js'],
     output: {
-      name: 'SpritePool',
-      file: pkg.browser,
+      name: umd.name,
+      file: umd.file,
       format: 'umd',
       globals: {
         'pixi.js': 'PIXI'
-      }
+      },
+      sourcemap: true
     },
     plugins: [
       resolve(),
       commonjs(),
-      buble({
-        exclude: ['node_modules/**']
+      buble(bubleOptions),
+      uglify({
+        sourcemap: true
       })
     ]
   },
@@ -39,9 +52,7 @@ export default [
       }
     ],
     plugins: [
-      buble({
-        exclude: ['node_modules/**']
-      })
+      buble(bubleOptions)
     ]
   }
 ]
