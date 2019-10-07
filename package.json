@@ -1,6 +1,6 @@
 {
   "name": "pixi-spritepool",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Sprite pooling aimed at pixi object pools",
   "main": "lib/spritepool.js",
   "module": "lib/spritepool.mjs",
