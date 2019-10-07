@@ -69,7 +69,7 @@ export class SpritePool {
   }
 
   /**
-   * @method attach
+   * @method detach
    * @param {PIXI.Container} container - the container to detach from
    * @param {SpritePool} [pool] - array-like object to detach sprites from
    */
