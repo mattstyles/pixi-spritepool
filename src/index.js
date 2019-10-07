@@ -2,6 +2,26 @@
 import { Sprite } from 'pixi.js'
 
 /**
+ * _onCreateItem
+ * Default callback when new items are added to the pool.
+ * @returns {any} - item to be appended to the pool.
+ */
+const _onCreateItem = () => {
+  const sprite = new Sprite()
+  sprite.visible = false
+  return sprite
+}
+
+/**
+ * _onRemoveItem
+ * Default callback when items are freed from the pool.
+ * @param {any} _ - item being removed
+ */
+const _onRemoveItem = (_) => {
+  _.destroy()
+}
+
+/**
  * Holds a pool of Sprites, with malloc and free abilities.
  * All sprites are hidden by default.
  * @class
@@ -36,7 +56,9 @@ export class SpritePool {
    */
   constructor ({
     length = 10,
-    container = null
+    container = null,
+    onCreateItem = _onCreateItem,
+    onRemoveItem = _onRemoveItem
   } = {}) {
     /**
      * @member SpritePool.pool
@@ -104,6 +126,7 @@ export class SpritePool {
    * @callback MapFunc
    * @defaults identity
    * @param {PIXI.Sprite}
+   * @returns {PIXI.Sprite}
    */
 
   /**
@@ -131,11 +154,7 @@ export class SpritePool {
    * @returns {PIXI.Sprite[]} - the list of newly initialised Sprites
    */
   malloc (length) {
-    const temp = Array.from({ length }, (_) => {
-      const sprite = new Sprite()
-      sprite.visible = false
-      return sprite
-    })
+    const temp = Array.from({ length }, this.onCreateItem)
     this.pool = this.pool.concat(temp)
     if (this.container) {
       this.attach(this.container, temp)
@@ -157,7 +176,7 @@ export class SpritePool {
     }
     let i = temp.length
     while (i--) {
-      temp[i].destroy()
+      this.onRemoveItem(temp[i])
     }
     return temp
   }
