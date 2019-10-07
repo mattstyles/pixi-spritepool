@@ -1,10 +1,12 @@
 {
   "name": "pixi-spritepool",
   "version": "0.1.0",
-  "description": "Pixi powered camera",
-  "main": "lib/index.js",
-  "module": "lib/index.mjs",
-  "jsnext:main": "lib/index.mjs",
+  "description": "Sprite pooling aimed at pixi object pools",
+  "main": "lib/spritepool.js",
+  "module": "lib/spritepool.mjs",
+  "jsnext:main": "lib/spritepool.mjs",
+  "unpkg": "dist/pixi-spritepool.min.js",
+  "jsdelivr": "dist/pixi-spritepool.min.js",
   "scripts": {
     "clean": "rimraf dist lib",
     "test": "tape -r buba/register src/**/*.spec.js",
