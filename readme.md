@@ -20,6 +20,85 @@ npm i -S pixi-spritepool
 yarn add pixi-spritepool
 ```
 
+Helper for allocating a collection of sprites.
+
+```js
+import { Container } from 'pixi.js'
+import { SpritePool } from 'pixi-spritepool'
+
+const container = new Container()
+const pool = SpritePool.of({
+  length: 100,
+  container
+})
+```
+
+The above will create a set of sprite objects and attach them to the container. If you need to extend the length of the pool, or reduce it, the following methods will help you:
+
+```js
+pool.malloc(20)
+pool.free(20)
+```
+
+As a container has been attached during the constructor malloc and free with attach and detach sprites from that container. Additionally, it will call `onCreateItem` and `onRemoveItem` callbacks which allow side effects to occur when calling malloc or free:
+
+```js
+import { Sprite } from 'pixi.js'
+
+const onCreate = () => {
+  console.log('Creating new sprite')
+  return new Sprite()
+}
+const onDestroy = () => {
+  console.log('Destroying sprite')
+}
+
+const pool = SpritePool.of({
+  length: 100,
+  container,
+  onCreateItem: onCreate,
+  onRemoveItem: onRemoveItem
+})
+// Creating new sprite
+
+pool.free(10)
+// Destroying sprite
+```
+
+If you want more control over the pool and where those sprites attach to then you can omit the `container` parameter from the constructor and handle this yourself, the `onCreateItem` and `onRemoveItem` callbacks might be useful.
+
+You could attach or detach an entire pool to/from a container. The following methods will handle adding or removing a child from the given container.
+
+```js
+const container2 = new Container()
+
+pool.detach(container)
+pool.attach(container2)
+```
+
+Note that there is nothing (other than your conscience) stopping you from attaching sprites to multiple containers.
+
+There are a couple of methods for helping to deal with the pool.
+
+```js
+console.log(pool.length)
+// 100
+
+console.log(pool.get(4))
+// Sprite
+
+pool.each(sprite => console.log(sprite))
+// Sprite
+
+pool.map(sprite => {
+  console.log('old', sprite)
+  // Note that in this example the above sprite is being replaced but it has
+  // not been detached, if it was ever attached in the first place.
+  return new Sprite()
+})
+// old Sprite
+```
+
 ## Running tests
 
 ```sh
