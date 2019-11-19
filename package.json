@@ -14,7 +14,8 @@
     "prepack": "npm run build",
     "watch": "rollup -c -w",
     "prebuild": "npm run clean",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "start": "speedrun example.js"
   },
   "husky": {
     "hooks": {
@@ -60,6 +61,7 @@
   "devDependencies": {
     "babel-eslint": "^10.0.3",
     "buba": "^4.0.2",
+    "canvas-fit": "^1.5.0",
     "husky": "^3.0.8",
     "lint-staged": "^9.4.1",
     "rimraf": "^3.0.0",
@@ -69,7 +71,9 @@
     "rollup-plugin-filesize": "^6.2.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-uglify": "^6.0.3",
+    "speedrun": "^1.0.0",
     "standard": "^14.3.1",
+    "stats.js": "^0.17.0",
     "tape": "^4.11.0",
     "tape-run": "^6.0.1"
   },
