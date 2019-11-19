@@ -2,6 +2,12 @@
 import { Sprite } from 'pixi.js'
 
 /**
+ * @callback CreateFunc
+ * @param {void}
+ * @returns {any}
+ */
+
+/**
  * _onCreateItem
  * Default callback when new items are added to the pool.
  * @returns {any} - item to be appended to the pool.
@@ -11,6 +17,11 @@ const _onCreateItem = () => {
   sprite.visible = false
   return sprite
 }
+
+/**
+ * @callback RemoveFunc
+ * @param {any}
+ */
 
 /**
  * _onRemoveItem
@@ -52,6 +63,8 @@ export class SpritePool {
    * @constructor
    * @param {object} [params] - single-arity parametric constructor
    * @param {number} [params.length=10] - the size of the initial pool
+   * @param {CreateFunc} [params.onCreateItem=default] - called when pool items are allocated
+   * @param {RemoveFunc} [params.onRemoveItem=default] - called when pool items are freed
    * @param {?PIXI.Container} [params.container=null] - the container to attach to
    */
   constructor ({
@@ -71,6 +84,18 @@ export class SpritePool {
      * @type {?PIXI.Container}
      */
     this.container = container
+
+    /**
+     * @member SpritePool.onCreateItem
+     * @type {CreateFunc}
+     */
+    this.onCreateItem = onCreateItem
+
+    /**
+     * @member SpritePool.onRemoveItem
+     * @type {RemoveFunc}
+     */
+    this.onRemoveItem = onRemoveItem
 
     this.malloc(length)
   }
