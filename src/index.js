@@ -170,6 +170,25 @@ export class SpritePool {
   }
 
   /**
+   * @callback EachFunc
+   * @defaults noop
+   * @param {PIXI.Sprite}
+   */
+
+  /**
+   * Iterates linearly over the entire pool of items.
+   *
+   * @method map
+   * @param {EachFunc} [cb=noop] - the function applied to each item.
+   */
+  each (cb = _ => _) {
+    let i = this.pool.length
+    while (i--) {
+      cb(this.pool[i])
+    }
+  }
+
+  /**
    * Allocates a new array and applies it to the existing pool.
    * Usually you'll want to attach this pool to a container, which will be done
    * automatically if we have a container supplied, otherwise its a job for
