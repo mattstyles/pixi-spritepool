@@ -2,17 +2,14 @@
 import Stats from 'stats.js'
 import fit from 'canvas-fit'
 import {
-  Application, Container, Sprite, Texture,
+  Container, Sprite, Texture,
   Rectangle, Point, Text, TextStyle,
-  settings, SCALE_MODES
+  autoDetectRenderer
 } from 'pixi.js'
-import { SpritePool } from './src'
 import tex from './example.png'
 
-const poolSize = 1e5
 const increment = 200
-
-settings.SCALE_MODE = SCALE_MODES.NEAREST
+const maxEntities = 2e4
 
 const stats = new Stats()
 stats.showPanel(0)
@@ -20,25 +17,35 @@ stats.dom.style.right = '0px'
 stats.dom.style.left = 'auto'
 document.body.appendChild(stats.dom)
 
-const dpr = window.devicePixelRatio || 1
-// const dpr = 1
+// const dpr = window.devicePixelRatio || 1
+const dpr = 1
 
 const canvas = document.createElement('canvas')
 document.body.appendChild(canvas)
 const resizeCanvas = fit(canvas)
-const app = new Application({
+// const app = new Application({
+//   width: canvas.width,
+//   height: canvas.height,
+//   backgroundColor: 0x333333,
+//   resolution: dpr,
+//   view: canvas
+// })
+const options = {
   width: canvas.width,
   height: canvas.height,
   backgroundColor: 0x333333,
   resolution: dpr,
   view: canvas
-})
-const viewport = new Rectangle(0, 0, canvas.width / dpr, canvas.height / dpr)
+}
+const renderer = autoDetectRenderer(options)
+const stage = new Container()
+
+const viewport = new Rectangle(0, 0, canvas.width, canvas.height)
 const container = new Container()
-app.stage.addChild(container)
+stage.addChild(container)
 const resize = () => {
   resizeCanvas()
-  app.renderer.resize(canvas.width, canvas.height)
+  renderer.resize(canvas.width, canvas.height)
   viewport.width = canvas.width / dpr
   viewport.height = canvas.height / dpr
   container.hitArea = new Rectangle(
@@ -66,63 +73,56 @@ text.position.x = 10
 text.position.y = 10
 container.addChild(text)
 
-const onCreate = () => {
-  const sprite = new Sprite(texture)
-  sprite.visible = false
-  sprite.anchor.x = 0.5
-  sprite.anchor.y = 1
-  return sprite
-}
-
-const pool = SpritePool.of({
-  length: poolSize,
-  container,
-  onCreateItem: onCreate
-})
-
-const random = (min, max, float = false) => {
-  const value = min + ((max - min) * Math.random())
-  return float ? value : value | 0
+const random = (min, max) => {
+  const range = (max - min) * Math.random()
+  return (min + range) | 0
 }
 
 class Dude {
   constructor (x, y, sprite) {
     this.speed = new Point(
-      random(-8, 8, true),
-      random(3, 8, true)
+      random(-10, 10),
+      random(3, 8)
     )
     this.gravity = 0.75
-    this.position = new Point(x, y)
+    this.sprite = new Sprite(texture)
+    this.sprite.position.x = x
+    this.sprite.position.y = y
+    this.sprite.anchor.x = 0.5
+    this.sprite.anchor.y = 0.5
+    this.sprite.visible = true
+
+    container.addChild(this.sprite)
   }
 }
 
 const update = dude => {
-  dude.position.x += dude.speed.x
-  dude.position.y += dude.speed.y
+  dude.sprite.position.x += dude.speed.x
+  dude.sprite.position.y += dude.speed.y
   dude.speed.y += dude.gravity
 
-  if (dude.position.x > viewport.x + viewport.width) {
+  if (dude.sprite.position.x > viewport.x + viewport.width) {
     dude.speed.x *= -1
-    dude.position.x = viewport.x + viewport.width
+    dude.sprite.position.x = viewport.x + viewport.width
   }
 
-  if (dude.position.x < viewport.x) {
+  if (dude.sprite.position.x < viewport.x) {
     dude.speed.x *= -1
-    dude.position.x = viewport.x
+    dude.sprite.position.x = viewport.x
   }
 
-  if (dude.position.y > viewport.y + viewport.height) {
+  if (dude.sprite.position.y > viewport.y + viewport.height) {
     dude.speed.y *= -0.85
-    dude.position.y = viewport.y + viewport.height
+    dude.sprite.position.y = viewport.y + viewport.height
 
     if (Math.random() > 0.5) {
       dude.speed.y -= random(1, 3)
     }
   }
 
-  if (dude.position.y < viewport.y) {
+  if (dude.sprite.position.y < viewport.y) {
     dude.speed.y *= -1
-    dude.position.y = viewport.y
+    dude.sprite.position.y = viewport.y
   }
 }
 
@@ -131,14 +131,11 @@ const dudes = [new Dude(100, 100)]
 const createDudes = (x, y) => {
   let i = increment
   while (i--) {
-    if (dudes.length >= pool.length) {
+    if (dudes.length >= maxEntities) {
       break
     }
 
-    dudes.push(new Dude(
-      x + random(-10, 10, true),
-      y + random(-10, 10, true)
-    ))
+    dudes.push(new Dude(x + random(-10, 10), y + random(-10, 10)))
   }
 
   text.text = `Count: ${dudes.length}`
@@ -162,19 +159,16 @@ container.on('pointerup', event => {
 const render = () => {
   stats.begin()
 
-  let i = dudes.length
-  while (i--) {
-    const dude = dudes[i]
-    const sprite = pool.get(i)
-    sprite.visible = true
-    sprite.position.x = dude.position.x
-    sprite.position.y = dude.position.y
-  }
-
-  stats.end()
-}
-
-const updateAll = () => {
+  // let i = dudes.length
+  // while (i--) {
+  //   const dude = dudes[i]
+  //   const sprite = pool.get(i)
+  //   // sprite.visible = true
+  //   sprite.position.x = dude.position.x
+  //   sprite.position.y = dude.position.y
+  //
+  //   // pool.get(i).position.set(dudes[i].position.x, dudes[i].position.y)
+  // }
   let i = dudes.length
   while (i--) {
     update(dudes[i])
@@ -183,12 +177,31 @@ const updateAll = () => {
   if (isDown) {
     createDudes(...isDown)
   }
+
+  renderer.render(stage)
+
+  stats.end()
+
+  window.requestAnimationFrame(render)
 }
 
-app.ticker.add(render)
-app.ticker.add(updateAll)
+// const updateAll = () => {
+//   let i = dudes.length
+//   while (i--) {
+//     update(dudes[i])
+//   }
+//
+//   if (isDown) {
+//     createDudes(...isDown)
+//   }
+// }
 
-window.pool = pool
+render()
+
+// app.ticker.add(render)
+// app.ticker.add(updateAll)
+
+// window.pool = pool
 window.dudes = dudes
 window.container = container
-window.app = app
+// window.app = app
