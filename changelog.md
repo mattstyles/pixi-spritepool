@@ -1,5 +1,5 @@
 
-#
+# 0.3.0
 
 * _add_ `onCreateItem` and `onRemoveItem` callbacks
 * _add_ `each` method
