@@ -3,8 +3,8 @@
   "version": "0.3.0",
   "description": "Sprite pooling aimed at pixi object pools",
   "main": "lib/spritepool.js",
-  "module": "lib/spritepool.mjs",
-  "jsnext:main": "lib/spritepool.mjs",
+  "module": "lib/spritepool.esm.js",
+  "jsnext:main": "lib/spritepool.esm.js",
   "unpkg": "dist/pixi-spritepool.min.js",
   "jsdelivr": "dist/pixi-spritepool.min.js",
   "scripts": {
