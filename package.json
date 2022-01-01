@@ -34,11 +34,12 @@
     "types:watch": "tsc -w --build tsconfig.build.json",
     "size": "size-limit",
     "watch": "concurrently --kill-others \"pnpm run build:watch\" \"pnpm run types:watch\" \"pnpm run test:watch\"",
+    "build:all": "pnpm run build && pnpm run build:esm && pnpm run bundle && pnpm run types",
     "example": "pnpm run build && pnpm run build:esm && speedrun example.js"
   },
   "husky": {
     "hooks": {
-      "pre-push": "pnpm run test && pnpm run build"
+      "pre-push": "pnpm run test && pnpm run build:all"
     }
   },
   "author": "Matt Styles",
