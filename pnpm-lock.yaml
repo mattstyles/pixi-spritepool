@@ -5,6 +5,7 @@ specifiers:
   '@swc/core': ^1.2.124
   '@swc/jest': ^0.2.15
   '@types/jest': ^27.4.0
+  '@types/offscreencanvas': ^2019.6.4
   chokidar: ^3.5.2
   concurrently: ^6.5.1
   jest: ^27.4.5
@@ -24,6 +25,7 @@ devDependencies:
   '@swc/core': 1.2.124
   '@swc/jest': 0.2.15_@swc+core@1.2.124
   '@types/jest': 27.4.0
+  '@types/offscreencanvas': 2019.6.4
   chokidar: 3.5.2
   concurrently: 6.5.1
   jest: 27.4.5
@@ -2950,6 +2952,10 @@ packages:
 
   /@types/node/17.0.6:
     resolution: {integrity: sha512-+XBAjfZmmivILUzO0HwBJoYkAyyySSLg5KCGBDFLomJo0sV6szvVLAf4ANZZ0pfWzgEds5KmGLG9D5hfEqOhaA==}
+
+  /@types/offscreencanvas/2019.6.4:
+    resolution: {integrity: sha512-u8SAgdZ8ROtkTF+mfZGOscl0or6BSj9A4g37e6nvxDc+YB/oDut0wHkK2PBBiC2bNR8TS0CPV+1gAk4fNisr1Q==}
+    dev: true
 
   /@types/parse-json/4.0.0:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}

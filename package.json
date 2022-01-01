@@ -34,7 +34,7 @@
     "types:watch": "tsc -w --build tsconfig.build.json",
     "size": "size-limit",
     "watch": "concurrently --kill-others \"pnpm run build:watch\" \"pnpm run types:watch\" \"pnpm run test:watch\"",
-    "build:all": "pnpm run build && pnpm run build:esm && pnpm run bundle && pnpm run types",
+    "build:all": "pnpm run build && pnpm run build:esm && pnpm run types",
     "example": "pnpm run build && pnpm run build:esm && parcel examples/index.html"
   },
   "husky": {
@@ -64,6 +64,7 @@
     "@swc/core": "^1.2.124",
     "@swc/jest": "^0.2.15",
     "@types/jest": "^27.4.0",
+    "@types/offscreencanvas": "^2019.6.4",
     "chokidar": "^3.5.2",
     "concurrently": "^6.5.1",
     "jest": "^27.4.5",
