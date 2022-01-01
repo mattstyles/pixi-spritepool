@@ -1,12 +1,17 @@
-
 import Stats from 'stats.js'
-import fit from 'canvas-fit'
 import {
-  Application, Container, Sprite, Texture,
-  Rectangle, Point, Text, TextStyle,
-  settings, SCALE_MODES
+  Application,
+  Container,
+  Sprite,
+  Texture,
+  Rectangle,
+  Point,
+  Text,
+  TextStyle,
+  settings,
+  SCALE_MODES,
 } from 'pixi.js'
-import { SpritePool } from './src'
+import {SpritePool} from '../esm'
 import tex from './example.png'
 
 const poolSize = 1e5
@@ -20,37 +25,19 @@ stats.dom.style.right = '0px'
 stats.dom.style.left = 'auto'
 document.body.appendChild(stats.dom)
 
+const canvas = document.querySelector('.js-canvas')
 const dpr = window.devicePixelRatio || 1
-// const dpr = 1
-
-const canvas = document.createElement('canvas')
-document.body.appendChild(canvas)
-const resizeCanvas = fit(canvas)
 const app = new Application({
-  width: canvas.width,
-  height: canvas.height,
-  backgroundColor: 0x333333,
   resolution: dpr,
-  view: canvas
+  backgroundColor: 0x293042,
+  antialias: true,
+  autoDensity: true,
+  resizeTo: window,
+  view: canvas,
 })
 const viewport = new Rectangle(0, 0, canvas.width / dpr, canvas.height / dpr)
 const container = new Container()
 app.stage.addChild(container)
-const resize = () => {
-  resizeCanvas()
-  app.renderer.resize(canvas.width, canvas.height)
-  viewport.width = canvas.width / dpr
-  viewport.height = canvas.height / dpr
-  container.hitArea = new Rectangle(
-    viewport.x,
-    viewport.y,
-    viewport.width,
-    viewport.height
-  )
-  console.log(viewport)
-}
-window.addEventListener('resize', resize)
-resize()
 
 const texture = Texture.from(tex)
 
@@ -59,12 +46,16 @@ container.buttonMode = true
 
 const style = new TextStyle({
   fontSize: 16,
-  fill: 0xf4f5fc
+  fill: 0xf4f5fc,
 })
 const text = new Text('', style)
 text.position.x = 10
 text.position.y = 10
 container.addChild(text)
+
+const clickHere = new Text('Click here', style)
+clickHere.position.set(10, 40)
+container.addChild(clickHere)
 
 const onCreate = () => {
   const sprite = new Sprite(texture)
@@ -77,26 +68,23 @@ const onCreate = () => {
 const pool = SpritePool.of({
   length: poolSize,
   container,
-  onCreateItem: onCreate
+  onCreateItem: onCreate,
 })
 
 const random = (min, max, float = false) => {
-  const value = min + ((max - min) * Math.random())
+  const value = min + (max - min) * Math.random()
   return float ? value : value | 0
 }
 
 class Dude {
-  constructor (x, y, sprite) {
-    this.speed = new Point(
-      random(-8, 8, true),
-      random(3, 8, true)
-    )
+  constructor(x, y, sprite) {
+    this.speed = new Point(random(-8, 8, true), random(3, 8, true))
     this.gravity = 0.75
     this.position = new Point(x, y)
   }
 }
 
-const update = dude => {
+const update = (dude) => {
   dude.position.x += dude.speed.x
   dude.position.y += dude.speed.y
   dude.speed.y += dude.gravity
@@ -135,27 +123,34 @@ const createDudes = (x, y) => {
       break
     }
 
-    dudes.push(new Dude(
-      x + random(-10, 10, true),
-      y + random(-10, 10, true)
-    ))
+    dudes.push(new Dude(x + random(-10, 10, true), y + random(-10, 10, true)))
   }
 
   text.text = `Count: ${dudes.length}`
 }
 
+// const sprite = new Sprite(texture)
+// sprite.scale.set(10)
+// sprite.position.set(0, 200)
+// sprite.interactive = true
+// sprite.buttonMode = true
+// container.addChild(sprite)
+// sprite.on('pointerdown', (event) => {
+//   console.log('clickety click')
+// })
+
 let isDown = false
-container.on('pointerdown', event => {
-  const { x, y } = event.data.getLocalPosition(container)
+container.on('pointerdown', (event) => {
+  const {x, y} = event.data.getLocalPosition(container)
   isDown = [x, y]
 })
-container.on('pointermove', event => {
-  const { x, y } = event.data.getLocalPosition(container)
+container.on('pointermove', (event) => {
+  const {x, y} = event.data.getLocalPosition(container)
   if (isDown) {
     isDown = [x, y]
   }
 })
-container.on('pointerup', event => {
+container.on('pointerup', (event) => {
   isDown = false
 })
 
@@ -188,6 +183,7 @@ const updateAll = () => {
 app.ticker.add(render)
 app.ticker.add(updateAll)
 
+window.text = text
 window.pool = pool
 window.dudes = dudes
 window.container = container

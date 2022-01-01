@@ -3,6 +3,7 @@ dist
 esm
 build
 .cache
+.parcel-cache
 node_modules
 *.log*
 example.*.html
