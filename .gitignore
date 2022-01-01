@@ -1,5 +1,7 @@
 lib
 dist
+esm
+build
 .cache
 node_modules
 *.log*

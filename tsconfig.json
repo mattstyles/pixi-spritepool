@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "declaration": true,
+    "downlevelIteration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./lib"
+  },
+  "exclude": ["node_modules", "**/*/lib", "**/*/dist"]
+}

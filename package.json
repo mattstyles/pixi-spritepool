@@ -1,31 +1,46 @@
 {
   "name": "pixi-spritepool",
-  "version": "0.3.2",
+  "version": "1.0.0-alpha",
   "description": "Sprite pooling aimed at pixi object pools",
-  "main": "lib/spritepool.js",
-  "module": "lib/spritepool.esm.js",
-  "jsnext:main": "lib/spritepool.esm.js",
+  "main": "lib/index.js",
+  "module": "esm/index.js",
+  "jsnext:main": "esm/index.js",
   "unpkg": "dist/pixi-spritepool.min.js",
   "jsdelivr": "dist/pixi-spritepool.min.js",
-  "scripts": {
-    "clean": "rimraf dist lib",
-    "test": "tape -r buba/register src/**/*.spec.js",
-    "prepublish": "npm run build",
-    "prepack": "npm run build",
-    "watch": "rollup -c -w",
-    "prebuild": "npm run clean",
-    "build": "rollup -c",
-    "start": "speedrun example.js"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
+  "typings": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./esm/index.js"
+    },
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./esm/*.js"
     }
   },
   "files": [
     "dist",
-    "lib"
+    "lib",
+    "esm"
   ],
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "build": "NODE_ENV=production rimraf lib && swc src --config-file .swcrc -d lib",
+    "build:esm": "NODE_ENV=production rimraf esm && swc src --config-file .swcrc.esm -d esm",
+    "build:watch": "swc -w src -d lib",
+    "bundle": "NODE_ENV=production rimraf build && npx spack",
+    "types": "NODE_ENV=production tsc --build tsconfig.build.json",
+    "types:watch": "tsc -w --build tsconfig.build.json",
+    "size": "size-limit",
+    "watch": "concurrently --kill-others \"pnpm run build:watch\" \"pnpm run types:watch\" \"pnpm run test:watch\"",
+    "example": "pnpm run build && pnpm run build:esm && speedrun example.js"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "pnpm run test && pnpm run build"
+    }
+  },
   "author": "Matt Styles",
   "license": "MIT",
   "repository": {
@@ -35,49 +50,27 @@
   "keywords": [
     "pixi",
     "pixi.js",
-    "camera",
-    "viewport",
-    "view"
+    "view",
+    "sprite",
+    "pool"
   ],
   "bugs": {
     "url": "https://github.com/mattstyles/pixi-spritepool/issues"
   },
   "homepage": "https://github.com/mattstyles/pixi-spritepool#readme",
-  "lint-staged": {
-    "*.js": [
-      "standard"
-    ],
-    "*.jsx": [
-      "standard"
-    ]
-  },
-  "standard": {
-    "parser": "babel-eslint",
-    "ignore": [
-      "**/node_modules/**",
-      "**/lib/"
-    ]
-  },
   "devDependencies": {
-    "babel-eslint": "^10.0.3",
-    "buba": "^4.0.2",
-    "canvas-fit": "^1.5.0",
-    "husky": "^3.0.8",
-    "lint-staged": "^9.4.1",
-    "rimraf": "^3.0.0",
-    "rollup": "^1.23.1",
-    "rollup-plugin-buble": "^0.19.8",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-filesize": "^6.2.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-uglify": "^6.0.3",
-    "speedrun": "^1.0.0",
-    "standard": "^14.3.1",
-    "stats.js": "^0.17.0",
-    "tape": "^4.11.0",
-    "tape-run": "^6.0.1"
+    "@swc/cli": "^0.1.55",
+    "@swc/core": "^1.2.124",
+    "@swc/jest": "^0.2.15",
+    "@types/jest": "^27.4.0",
+    "chokidar": "^3.5.2",
+    "concurrently": "^6.5.1",
+    "jest": "^27.4.5",
+    "rimraf": "^3.0.2",
+    "speedrun": "^1.0.2",
+    "typescript": "^4.5.4"
   },
   "dependencies": {
-    "pixi.js": "^5.0.0"
+    "pixi.js": "^6.0.0"
   }
 }
