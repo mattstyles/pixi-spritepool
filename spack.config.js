@@ -6,7 +6,7 @@ module.exports = config({
   },
   output: {
     path: __dirname + '/build',
-    name: 'mathutil.js',
+    name: 'pixi-spritepool.js',
   },
   mode: 'production',
   options: {
